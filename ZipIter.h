@@ -1,5 +1,5 @@
-#ifndef ZIP_ITERATOR
-#define ZIP_ITERATOR
+#ifndef ZIP_ITER_H
+#define ZIP_ITER_H
 
 #include <type_traits>
 #include <tuple>
@@ -15,27 +15,27 @@
 #define CONCAT_(x, y) EXPAND(x ## y)
 
 
-#define ZIP_BEGIN1(x, ...) x.begin()
-#define ZIP_BEGIN2(x, ...) x.begin(), ZIP_BEGIN1(__VA_ARGS__)
-#define ZIP_BEGIN3(x, ...) x.begin(), ZIP_BEGIN2(__VA_ARGS__)
-#define ZIP_BEGIN4(x, ...) x.begin(), ZIP_BEGIN3(__VA_ARGS__)
-#define ZIP_BEGIN5(x, ...) x.begin(), ZIP_BEGIN4(__VA_ARGS__)
-#define ZIP_BEGIN6(x, ...) x.begin(), ZIP_BEGIN5(__VA_ARGS__)
-#define ZIP_BEGIN7(x, ...) x.begin(), ZIP_BEGIN6(__VA_ARGS__)
-#define ZIP_BEGIN8(x, ...) x.begin(), ZIP_BEGIN7(__VA_ARGS__)
+#define ZIP_BEGIN1(x, ...) std::begin(x)
+#define ZIP_BEGIN2(x, ...) std::begin(x), ZIP_BEGIN1(__VA_ARGS__)
+#define ZIP_BEGIN3(x, ...) std::begin(x), ZIP_BEGIN2(__VA_ARGS__)
+#define ZIP_BEGIN4(x, ...) std::begin(x), ZIP_BEGIN3(__VA_ARGS__)
+#define ZIP_BEGIN5(x, ...) std::begin(x), ZIP_BEGIN4(__VA_ARGS__)
+#define ZIP_BEGIN6(x, ...) std::begin(x), ZIP_BEGIN5(__VA_ARGS__)
+#define ZIP_BEGIN7(x, ...) std::begin(x), ZIP_BEGIN6(__VA_ARGS__)
+#define ZIP_BEGIN8(x, ...) std::begin(x), ZIP_BEGIN7(__VA_ARGS__)
 
-#define ZIP_END1(x, ...) x.end()
-#define ZIP_END2(x, ...) x.end(), ZIP_END1(__VA_ARGS__)
-#define ZIP_END3(x, ...) x.end(), ZIP_END2(__VA_ARGS__)
-#define ZIP_END4(x, ...) x.end(), ZIP_END3(__VA_ARGS__)
-#define ZIP_END5(x, ...) x.end(), ZIP_END4(__VA_ARGS__)
-#define ZIP_END6(x, ...) x.end(), ZIP_END5(__VA_ARGS__)
-#define ZIP_END7(x, ...) x.end(), ZIP_END6(__VA_ARGS__)
-#define ZIP_END8(x, ...) x.end(), ZIP_END7(__VA_ARGS__)
+#define ZIP_END1(x, ...) std::end(x)
+#define ZIP_END2(x, ...) std::end(x), ZIP_END1(__VA_ARGS__)
+#define ZIP_END3(x, ...) std::end(x), ZIP_END2(__VA_ARGS__)
+#define ZIP_END4(x, ...) std::end(x), ZIP_END3(__VA_ARGS__)
+#define ZIP_END5(x, ...) std::end(x), ZIP_END4(__VA_ARGS__)
+#define ZIP_END6(x, ...) std::end(x), ZIP_END5(__VA_ARGS__)
+#define ZIP_END7(x, ...) std::end(x), ZIP_END6(__VA_ARGS__)
+#define ZIP_END8(x, ...) std::end(x), ZIP_END7(__VA_ARGS__)
 
 
-#define ZIP_ALL(...) EXPAND(it::zip(EXPAND(CONCAT(ZIP_BEGIN, NARGS(__VA_ARGS__)))(__VA_ARGS__)),  \
-                            it::zip(EXPAND(CONCAT(ZIP_END,   NARGS(__VA_ARGS__)))(__VA_ARGS__)))
+#define ZIP_ALL(...) EXPAND(it::zipIter(EXPAND(CONCAT(ZIP_BEGIN, NARGS(__VA_ARGS__)))(__VA_ARGS__)),  \
+                            it::zipIter(EXPAND(CONCAT(ZIP_END,   NARGS(__VA_ARGS__)))(__VA_ARGS__)))
 
 
 
@@ -57,6 +57,34 @@ void execTuple (Function function, std::tuple<Args...>& tup, FuncArgs&&... funcA
 {
     return execTuple(function, tup, std::make_index_sequence<sizeof...(Args)>(), std::forward<FuncArgs>(funcArgs)...);
 }
+
+
+
+template <std::size_t P, class Apply, class... Args, std::size_t... Is, std::size_t... Js>
+decltype(auto) reverse (Apply apply, std::tuple<Args...>&& tup, std::index_sequence<Is...>, std::index_sequence<Js...>)
+{
+    return apply(std::get<Js+P>(tup)..., std::get<Is>(tup)...);
+}
+
+template <std::size_t P, class Apply, class... Args>
+decltype(auto) reverse (Apply apply, Args&&... args)
+{
+    return reverse<P>(apply, std::forward_as_tuple(std::forward<Args>(args)...), 
+                          std::make_index_sequence<P>{}, 
+                          std::make_index_sequence<sizeof...(Args)-P>{});
+}
+
+
+
+template <typename T>
+struct Iterable { using iterator = typename T::iterator; };
+
+template <typename T, std::size_t N>
+struct Iterable<T[N]> { using iterator = T[N]; };
+
+template <typename T>
+struct Iterable<T*> { using iterator = T*; };
+
 
 
 
@@ -103,10 +131,7 @@ struct SelectIterTag < Iter1, Iter2 >
 };
 
 template <class Iter, class... Iters>
-struct SelectIterTag < Iter, Iters... >
-{
-    using type = typename SelectIterTag< Iter, typename SelectIterTag< Iters... >::type >::type;
-};
+struct SelectIterTag < Iter, Iters... > : SelectIterTag< Iter, typename SelectIterTag< Iters... >::type > {};
 
 template <class... Iter>
 using SelectIterTag_t = typename SelectIterTag< Iter... >::type;
@@ -128,7 +153,7 @@ auto add       = [](auto&& x, int inc) { return x + inc; };
 
 
 template <class... Iters>
-class ZipIterator : std::iterator < help::SelectIterTag_t< typename std::iterator_traits< Iters >::iterator_category... >, 
+class ZipIter : std::iterator < help::SelectIterTag_t< typename std::iterator_traits< Iters >::iterator_category... >, 
                                     std::tuple< Iters... > >
 {
 public:
@@ -136,52 +161,57 @@ public:
         using Base = std::iterator < help::SelectIterTag_t< typename std::iterator_traits< Iters >::iterator_category... >, 
                                      std::tuple< Iters... > >;
 
-        using value_type = typename Base::value_type;
-        using reference  = typename Base::reference;
-        using pointer    = typename Base::pointer;
+        using value_type      = typename Base::value_type;
+        using reference       = typename Base::reference;
+        using difference_type = typename Base::difference_type;
 
         using iterator_category = typename Base::iterator_category;
 
 
+        ZipIter (Iters... iterators) : iters ( iterators... ) {}
 
-        ZipIterator (Iters... iterators) : iters ( iterators... ) {}
-
-        ZipIterator (std::tuple<Iters...> iters) : iters( std::move( iters ) ) {}
-
+        ZipIter (std::tuple<Iters...> iters) : iters( std::move( iters ) ) {}
 
 
-        ZipIterator& operator ++ () { help::execTuple(help::increment, iters); return *this; }
 
-        ZipIterator  operator ++ (int) { ZipIterator temp{ *this }; help::execTuple(help::increment, iters); return temp; }
+        ZipIter& operator ++ () { help::execTuple(help::increment, iters); return *this; }
+
+        ZipIter  operator ++ (int) { ZipIter temp{ *this }; help::execTuple(help::increment, iters); return temp; }
 
 
         template <class Tag = iterator_category, 
                   std::enable_if_t< std::is_same< Tag, std::bidirectional_iterator_tag >::value, int > = 0 >
-        ZipIterator& operator -- ()   { help::execTuple(help::decrement, iters); return *this; }
+        ZipIter& operator -- ()   { help::execTuple(help::decrement, iters); return *this; }
 
         template <class Tag = iterator_category, 
                   std::enable_if_t< std::is_same< Tag, std::bidirectional_iterator_tag >::value, int > = 0 >
-        ZipIterator operator -- (int) { ZipIterator temp{ *this }; help::execTuple(help::decrement, iters); return temp; }
+        ZipIter operator -- (int) { ZipIter temp{ *this }; help::execTuple(help::decrement, iters); return temp; }
 
 
-        // template <class Tag = iterator_category, 
-        //           std::enable_if_t< std::is_same< Tag, std::random_access_iterator_tag >::value, int > = 0 >
-        // ZipIterator operator + (int inc) { ZipIterator temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
+        template <class Tag = iterator_category, 
+                  std::enable_if_t< std::is_same< Tag, std::random_access_iterator_tag >::value, int > = 0 >
+        ZipIter operator + (int inc) const { ZipIter temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
 
-        // template <class Tag = iterator_category, 
-        //           std::enable_if_t< std::is_same< Tag, std::random_access_iterator_tag >::value, int > = 0 >
-        // ZipIterator operator - (int inc) { ZipIterator temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
+        template <class Tag = iterator_category, 
+                  std::enable_if_t< std::is_same< Tag, std::random_access_iterator_tag >::value, int > = 0 >
+        ZipIter operator - (int inc) const { ZipIter temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
 
+
+        difference_type operator + (const ZipIter& zp) const { return std::get<0>(iters) + std::get<0>(zp.iters); }
+
+        difference_type operator - (const ZipIter& zp) const { return std::get<0>(iters) - std::get<0>(zp.iters); }
 
 
         template <typename Iter>
-        bool operator == (const Iter& iter) { return equal(iter); }
+        bool operator == (const Iter& iter) const { return equal(iter); }
 
         template <typename Iter>
-        bool operator != (const Iter& iter) { return !equal(iter); }
+        bool operator != (const Iter& iter) const { return !equal(iter); }
 
 
         decltype(auto) operator * () { return dereference( std::make_index_sequence< sizeof... (Iters) >() ); }
+
+        decltype(auto) operator * () const { return dereference( std::make_index_sequence< sizeof... (Iters) >() ); }
 
 
 
@@ -191,15 +221,21 @@ private:
     template <std::size_t... Is>
     decltype(auto) dereference (std::index_sequence<Is...>)
     {
-        return std::make_tuple( *std::get< Is >( iters )... );
+        return std::forward_as_tuple( *std::get< Is >( iters )... );
+    }
+
+    template <std::size_t... Is>
+    decltype(auto) dereference (std::index_sequence<Is...>) const
+    {
+        return std::forward_as_tuple( *std::get< Is >( iters )... );
     }
 
 
 
     template <typename Iter>
-    bool equal (const Iter& iter) { return std::get<0>(iters) == iter; }
+    bool equal (const Iter& iter) const { return std::get<0>(iters) == iter; }
 
-    bool equal (const ZipIterator& zipIter) { return std::get<0>(iters) == std::get<0>(zipIter.iters); }
+    bool equal (const ZipIter& zipIter) const { return std::get<0>(iters) == std::get<0>(zipIter.iters); }
 
 
 
@@ -208,17 +244,14 @@ private:
 };
 
 
-
-
-
 template <class... Containers>
 class Zip
 {
 public:
 
-    using value_type = std::tuple < std::decay_t< Containers >&... >;
+    using value_type = std::tuple < Containers... >;
 
-    using iterator = ZipIterator < typename std::decay_t< Containers >::iterator... >;
+    using iterator = ZipIter < typename help::Iterable< std::decay_t< Containers > >::iterator... >;
 
     using const_iterator = iterator;
 
@@ -226,7 +259,7 @@ public:
 
 
 
-    Zip ( Containers&... conts ) : containers( conts... ) {}
+    Zip (Containers... conts) : containers( conts... ) {}
 
 
 
@@ -291,14 +324,14 @@ private:
               std::enable_if_t< std::is_same < Tag, std::random_access_iterator_tag >::value, int > = 0>
     decltype(auto) at (std::size_t pos, std::index_sequence<Is...>)
     {
-        return std::make_tuple( containers[ Is ]... );
+        return std::forward_as_tuple( containers[ Is ]... );
     }
 
     template <class Tag = typename iterator::iterator_category, std::size_t... Is,
               std::enable_if_t< std::is_same < Tag, std::random_access_iterator_tag >::value, int > = 0>
     decltype(auto) at (std::size_t pos, std::index_sequence<Is...>) const
     {
-        return std::make_tuple( containers[ Is ]... );
+        return std::forward_as_tuple( containers[ Is ]... );
     }
 
 
@@ -306,23 +339,6 @@ private:
     value_type containers;
 
 };
-
-
-
-// template <class F>
-// struct UnZip
-// {
-//     UnZip (const F& f = F()) : f(f) {}
-
-//     template <typename... Args, typename Indexes = std::make_index_sequence<sizeof...(Args)>>
-//     void operator () (std::tuple<Args...>&& tup) { unpack(tup, Indexes()); }
-
-//     template <typename... Args, std::size_t... Is>
-//     void unpack (std::tuple<Args...>& tup, std::index_sequence<Is...>) { f(std::get<Is>(tup)...); }
-
-
-//     F f;
-// };
 
 
 
@@ -336,9 +352,9 @@ auto zip (Containers&&... containers)
 
 
 template <typename... Iterators>
-auto zipIterator (Iterators&&... iterators)
+auto zipIter (Iterators&&... iterators)
 {
-    return ZipIterator<Iterators...>(std::forward<Iterators>(iterators)...);
+    return ZipIter<Iterators...>(std::forward<Iterators>(iterators)...);
 }
 
 
@@ -370,43 +386,35 @@ auto unZip (F f)
 
 
 
-template <typename... Args, class Function, std::size_t... Is>
-void unZip (std::tuple<Args...>& tup, Function function, std::index_sequence<Is...>)
+template <class  Tuple, class Function, std::size_t... Is>
+void unZip (Tuple&& tup, Function function, std::index_sequence<Is...>)
 {
-    function( std::get< Is >( tup )... );
+    function( std::get< Is >( std::forward<Tuple>(tup) )... );
+}
+
+template <class Tuple, class Function>
+void unZip (Tuple&& tup, Function function)
+{
+    return unZip(std::forward<Tuple>(tup), function, std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>());
 }
 
 
-template <typename... Args, class Function>
-void unZip (std::tuple<Args...>& tup, Function function)
+
+
+template <typename... Args>
+void forEach (Args&&... args)
 {
-    return unZip(tup, function, std::make_index_sequence<sizeof...(Args)>());
+    static auto exec = [](auto f, auto&&... elems)
+    { 
+        for(auto&& tup : zip(std::forward<decltype(elems)>(elems)...))
+            unZip(std::forward<decltype(tup)>(tup), f);
+    };
+
+    help::reverse<sizeof...(Args)-1>(exec, std::forward<Args>(args)...);
 }
-
-
-
-template <class... Containers, class Function>
-void forEach (Zip<Containers...>& zip_, Function function)
-{
-    for(auto&& tup : zip_) unZip(tup, function);
-}
-
-template <class... Containers, class Function>
-void forEach (Zip<Containers...>&& zip_, Function function)
-{
-    for(auto&& tup : zip_) unZip(tup, function);
-}
-
-template <class... Containers, class Function>
-void forEach (const Zip<Containers...>& zip_, Function function)
-{
-    for(auto&& tup : zip_) unZip(tup, function);
-}
-
-
 
 
 } // namespace it
 
 
-#endif	// ZIP_ITERATOR
+#endif	// ZIP_ITER_H
