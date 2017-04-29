@@ -1,0 +1,52 @@
+\hypertarget{classit_1_1Zip}{}\section{it\+:\+:Zip$<$ Containers $>$ Class Template Reference}
+\label{classit_1_1Zip}\index{it\+::\+Zip$<$ Containers $>$@{it\+::\+Zip$<$ Containers $>$}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries value\+\_\+type} = std\+::tuple$<$ Containers... $>$\hypertarget{classit_1_1Zip_a9baa8c30fff173711c97c3341c28ea3b}{}\label{classit_1_1Zip_a9baa8c30fff173711c97c3341c28ea3b}
+
+\item 
+using {\bfseries iterator} = \hyperlink{classit_1_1ZipIter}{Zip\+Iter}$<$ typename \hyperlink{structit_1_1help_1_1Iterable}{help\+::\+Iterable}$<$ std\+::decay\+\_\+t$<$ Containers $>$ $>$\+::iterator... $>$\hypertarget{classit_1_1Zip_ae66c0e526070cf143256acddcc2c53cb}{}\label{classit_1_1Zip_ae66c0e526070cf143256acddcc2c53cb}
+
+\item 
+using {\bfseries const\+\_\+iterator} = \hyperlink{classit_1_1ZipIter}{iterator}\hypertarget{classit_1_1Zip_ac9c7dacbb33c23f586cb8886fdd58275}{}\label{classit_1_1Zip_ac9c7dacbb33c23f586cb8886fdd58275}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Zip} (Containers...\+conts)\hypertarget{classit_1_1Zip_a14e38c94da173e9c536bc8b430e36927}{}\label{classit_1_1Zip_a14e38c94da173e9c536bc8b430e36927}
+
+\item 
+\hyperlink{classit_1_1ZipIter}{iterator} {\bfseries begin} ()\hypertarget{classit_1_1Zip_af2e6f1d41c32c94a8b790a4870bd9340}{}\label{classit_1_1Zip_af2e6f1d41c32c94a8b790a4870bd9340}
+
+\item 
+\hyperlink{classit_1_1ZipIter}{const\+\_\+iterator} {\bfseries begin} () const \hypertarget{classit_1_1Zip_a1867c9ddfe0d78c7d6d826d6938ca7eb}{}\label{classit_1_1Zip_a1867c9ddfe0d78c7d6d826d6938ca7eb}
+
+\item 
+\hyperlink{classit_1_1ZipIter}{iterator} {\bfseries end} ()\hypertarget{classit_1_1Zip_aa9d9cb83973543f951a798e1052cc84a}{}\label{classit_1_1Zip_aa9d9cb83973543f951a798e1052cc84a}
+
+\item 
+\hyperlink{classit_1_1ZipIter}{const\+\_\+iterator} {\bfseries end} () const \hypertarget{classit_1_1Zip_aec064915b95a39b28b8eee0933c0ce5c}{}\label{classit_1_1Zip_aec064915b95a39b28b8eee0933c0ce5c}
+
+\item 
+{\footnotesize template$<$class Tag  = typename iterator\+::iterator\+\_\+category, std\+::enable\+\_\+if\+\_\+t$<$ std\+::is\+\_\+same$<$ Tag, std\+::random\+\_\+access\+\_\+iterator\+\_\+tag $>$\+::value, int $>$  = 0$>$ }\\decltype(auto) {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::size\+\_\+t pos)\hypertarget{classit_1_1Zip_aae59d505eaa1faee985f0720253b2b0c}{}\label{classit_1_1Zip_aae59d505eaa1faee985f0720253b2b0c}
+
+\item 
+{\footnotesize template$<$class Tag  = typename iterator\+::iterator\+\_\+category, std\+::enable\+\_\+if\+\_\+t$<$ std\+::is\+\_\+same$<$ Tag, std\+::random\+\_\+access\+\_\+iterator\+\_\+tag $>$\+::value, int $>$  = 0$>$ }\\decltype(auto) {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::size\+\_\+t pos) const \hypertarget{classit_1_1Zip_a925c92ad58f6c276c88559608efca86f}{}\label{classit_1_1Zip_a925c92ad58f6c276c88559608efca86f}
+
+\item 
+std\+::size\+\_\+t {\bfseries size} () const \hypertarget{classit_1_1Zip_a4a327ee188e189944c7f921c359ca2c8}{}\label{classit_1_1Zip_a4a327ee188e189944c7f921c359ca2c8}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr std\+::size\+\_\+t {\bfseries containers\+Size} = sizeof... (Containers)\hypertarget{classit_1_1Zip_acab4facb889a92e7f2d2c3c4b1f7d2ab}{}\label{classit_1_1Zip_acab4facb889a92e7f2d2c3c4b1f7d2ab}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/matheus/\+Algoritmos/\+Zip\+Iter/\+Zip\+Iter/\hyperlink{ZipIter_8h}{Zip\+Iter.\+h}\end{DoxyCompactItemize}

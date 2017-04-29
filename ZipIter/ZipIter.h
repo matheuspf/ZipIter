@@ -1,3 +1,26 @@
+/** 
+ *  @file    ZipIter.h
+ *  @author  Matheus Pedroza (matheuspf)
+ *  @date    April 2017
+ *  
+ *  @brief Simple facilities to iterate through multiple
+ *         containers at the same time similar to Python's zip
+ * 
+ *
+ *  @section DESCRIPTION
+ *  
+ *   Given two iterable containers 'v' and 'u', a way in 
+ *   the current C++11 to iterate between the two containers 
+ *   at the same time is
+ *
+ *
+ *
+ *
+ *
+ */
+
+
+
 #ifndef ZIP_ITER_H
 #define ZIP_ITER_H
 
