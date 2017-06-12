@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/matheus/Algoritmos/ZipIter/examples/STLExample.cpp
+bits/stdc++.h
+-
+ZipIter/ZipIter.h
+/home/matheus/Algoritmos/ZipIter/examples/ZipIter/ZipIter.h
+
+/home/matheus/Algoritmos/ZipIter/include/ZipIter/Helpers.h
+type_traits
+-
+tuple
+-
+iterator
+-
+
+/home/matheus/Algoritmos/ZipIter/include/ZipIter/ZipIter.h
+Helpers.h
+/home/matheus/Algoritmos/ZipIter/include/ZipIter/Helpers.h
+

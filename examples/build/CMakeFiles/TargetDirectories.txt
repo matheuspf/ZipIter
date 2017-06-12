@@ -1,0 +1,4 @@
+/home/matheus/Algoritmos/ZipIter/examples/build/CMakeFiles/edit_cache.dir
+/home/matheus/Algoritmos/ZipIter/examples/build/CMakeFiles/rebuild_cache.dir
+/home/matheus/Algoritmos/ZipIter/examples/build/CMakeFiles/STLExample.dir
+/home/matheus/Algoritmos/ZipIter/examples/build/CMakeFiles/LoopingExample.dir
