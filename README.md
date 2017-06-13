@@ -1,4 +1,7 @@
 # ZipIter
+
+[![Build Status](https://travis-ci.org/matheuspf/ZipIter.svg?branch=master)](https://travis-ci.org/matheuspf/ZipIter) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 This project is a header only implementation of an iterator zipper made in C++14.
 
 You can iterate and use stl algorithms on multiple iterators at the same time easily with no runtime overhead (using -O3 optimization flag).
