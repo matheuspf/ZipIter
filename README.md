@@ -32,7 +32,7 @@ cmake --build .
 Google Test will be downloaded automatically from the repository.
 <br>
 
-###Documentation
+### Documentation
 
 If you want to generate the documentation, install [Doxygen](http://www.stack.nl/~dimitri/doxygen/) and run:
 
