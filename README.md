@@ -9,6 +9,7 @@ You can iterate and use stl algorithms on multiple iterators at the same time ea
 No dependences or installation, just include and use.
 
 The library was tested on both g++ 6.2.0 and clang 3.9.1, and requires the ``-std=c++14`` flag.
+
 <br>
 
 ### Google Test
@@ -30,6 +31,8 @@ cmake --build .
 ```
 
 Google Test will be downloaded automatically from the repository.
+
+
 <br>
 
 ### Documentation
