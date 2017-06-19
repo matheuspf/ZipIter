@@ -7,11 +7,14 @@ project (${TEST_NAME})
 
 find_package(Threads REQUIRED)
 
-set(CXXFLAGS "-std=c++14 -O3 -Wall -Wno-deprecated -pthread")
-
 add_subdirectory(gtest)
 
 enable_testing()
+
+
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14 -g -fprofile-arcs -ftest-coverage -Wno-deprecated -pthread")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lgcov")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 
 get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
