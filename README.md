@@ -1,6 +1,7 @@
 # ZipIter
 
 [![Build Status](https://travis-ci.org/matheuspf/ZipIter.svg?branch=master)](https://travis-ci.org/matheuspf/ZipIter) [![Coverage Status](https://coveralls.io/repos/github/matheuspf/ZipIter/badge.svg?branch=master)](https://coveralls.io/github/matheuspf/ZipIter?branch=master)
+# 
 
 This project is a header only implementation of an iterator zipper made in C++14.
 
