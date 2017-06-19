@@ -1,8 +1,0 @@
-/home/matheus/Algoritmos/ZipIter/test/build/CMakeFiles/edit_cache.dir
-/home/matheus/Algoritmos/ZipIter/test/build/CMakeFiles/rebuild_cache.dir
-/home/matheus/Algoritmos/ZipIter/test/build/CMakeFiles/test.dir
-/home/matheus/Algoritmos/ZipIter/test/build/CMakeFiles/ZipIterTests.dir
-/home/matheus/Algoritmos/ZipIter/test/build/gtest/CMakeFiles/edit_cache.dir
-/home/matheus/Algoritmos/ZipIter/test/build/gtest/CMakeFiles/rebuild_cache.dir
-/home/matheus/Algoritmos/ZipIter/test/build/gtest/CMakeFiles/test.dir
-/home/matheus/Algoritmos/ZipIter/test/build/gtest/CMakeFiles/googletest.dir
