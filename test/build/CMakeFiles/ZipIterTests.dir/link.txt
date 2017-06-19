@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++14 -g -fprofile-arcs -ftest-coverage -Wno-deprecated -pthread   -lgcov CMakeFiles/ZipIterTests.dir/STLTest.o CMakeFiles/ZipIterTests.dir/LoopingTest.o  -o ZipIterTests -rdynamic gtest/src/googletest-build/googlemock/gtest/libgtest.a gtest/src/googletest-build/googlemock/gtest/libgtest_main.a -lpthread 
