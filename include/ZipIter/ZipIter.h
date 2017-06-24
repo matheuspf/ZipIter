@@ -62,48 +62,91 @@ public:
           * tuple of iterators. Some of the methods are disabled if some iterator
           * does not meet all the requirements.
         */
-        ZipIter& operator ++ () { help::execTuple(help::increment, iters); return *this; }
+        ZipIter& operator ++ ()
+        {
+            help::execTuple(help::increment, iters); return *this;
+        }
 
-        ZipIter  operator ++ (int) { ZipIter temp{ *this }; operator++(); return temp; }
+        ZipIter operator ++ (int)
+        {
+            ZipIter temp{*this};
+
+            operator++();
+
+            return temp;
+        }
 
 
         template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::bidirectional_iterator_tag > = 0 >
-        ZipIter& operator -- ()   { help::execTuple(help::decrement, iters); return *this; }
+        ZipIter& operator -- ()
+        {
+            help::execTuple(help::decrement, iters); return *this;
+        }
 
         template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::bidirectional_iterator_tag > = 0 >
-        ZipIter operator -- (int) { ZipIter temp{ *this }; operator--(); return temp; }
+        ZipIter operator -- (int)
+        {
+            ZipIter temp{ *this };
+
+            operator--();
+
+            return temp;
+        }
 
 
         template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::random_access_iterator_tag > = 0 >
-        ZipIter operator + (int inc) const { ZipIter temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
+        ZipIter& operator += (int inc)
+        {
+          help::execTuple(help::add, iters, inc);
+
+          return *this;
+        }
 
         template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::random_access_iterator_tag > = 0 >
-        ZipIter operator - (int inc) const { ZipIter temp{ *this }; help::execTuple(help::add, temp.iters, inc); return temp; }
+        ZipIter& operator -= (int inc)
+        {
+            help::execTuple(help::add, iters, -inc);
 
-
-        template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::random_access_iterator_tag > = 0 >
-        difference_type operator + (const ZipIter& zp) const { return std::get<0>(iters) + std::get<0>(zp.iters); }
-
-        template <class Tag = iterator_category, help::EnableIfMinimumTag< Tag, std::random_access_iterator_tag > = 0 >
-        difference_type operator - (const ZipIter& zp) const { return std::get<0>(iters) - std::get<0>(zp.iters); }
-
-
-        /// These are overloaded to also compare with a iterator of type T (the first of the tuple)
-        template <typename Iter>
-        bool operator < (const Iter& iter) const { return less(iter); }
-
-        template <typename Iter>
-        bool operator == (const Iter& iter) const { return equal(iter); }
-
-        template <typename Iter>
-        bool operator != (const Iter& iter) const { return !equal(iter); }
+            return *this;
+        }
 
 
 
-        /// Delegating
-        decltype(auto) operator * () { return dereference( std::make_index_sequence< sizeof... (Iters) + 1 >() ); }
+        /// Here we have non member function operators
+        template <typename U, typename... Args>
+		friend auto operator+ (ZipIter<U, Args...>, int);
 
-        decltype(auto) operator * () const { return dereference( std::make_index_sequence< sizeof... (Iters) + 1 >() ); }
+		template <typename U, typename... Args>
+		friend auto operator- (ZipIter<U, Args...>, int);
+
+		template <typename U, typename... Args>
+		friend auto operator+ (const ZipIter<U, Args...>&, const ZipIter<U, Args...>&);
+
+		template <typename U, typename... Args>
+		friend auto operator- (const ZipIter<U, Args...>&, const ZipIter<U, Args...>&);
+
+
+		template <typename U, typename... Args>
+		friend bool operator == (const ZipIter<U, Args...>&, const ZipIter<U, Args...>&);
+
+		template <typename U, typename... Args>
+		friend bool operator < (const ZipIter<U, Args...>&, const ZipIter<U, Args...>&);
+
+
+
+
+        /** Delegating. I dont implement 'operator->' because the return of dereferencing
+          * is a temporary, and because it is almost not used (not by any stl function I now).
+        */
+        decltype(auto) operator * ()
+        {
+        	return dereference( std::make_index_sequence< sizeof... (Iters) + 1 >() );
+        }
+
+        decltype(auto) operator * () const
+        {
+        	return dereference( std::make_index_sequence< sizeof... (Iters) + 1 >() );
+        }
 
 
 
@@ -126,23 +169,86 @@ private:
 
 
 
-
-    /// Comparisons. The first element defines the range
-    bool less (const T& iter) const { return std::get<0>(iters) < iter; }
-
-    bool less (const ZipIter& iter) const { return std::get<0>(iters) < std::get<0>(iter.iters); }
-
-
-    bool equal (const T& iter) const { return std::get<0>(iters) == iter; }
-
-    bool equal (const ZipIter& iter) const { return std::get<0>(iters) == std::get<0>(iter.iters); }
-
-
-
     /// The tuple of iterators
     iters_type iters;
 
 };
+
+
+
+/// 'operator+' and 'operator-' will call 'operator+=' and 'operator-=' for increment
+template <typename T, typename... Iters>
+inline auto operator+ (ZipIter<T, Iters...> iter, int inc)
+{
+	iter += inc;
+
+	return iter;
+}
+
+template <typename T, typename... Iters>
+inline auto operator- (ZipIter<T, Iters...> iter, int inc)
+{
+	iter -= inc;
+
+	return iter;
+}
+
+
+/// Distance from two iterators
+template <typename T, typename... Iters>
+inline auto operator+ (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return std::get<0>(iter1.iters) + std::get<0>(iter2.iters);
+}
+
+template <typename T, typename... Iters>
+inline auto operator- (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return std::get<0>(iter1.iters) - std::get<0>(iter2.iters);
+}
+
+
+/// Comparisons. Only 'operator==' and 'operator<' are defined
+template <typename T, typename... Iters>
+inline bool operator== (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return std::get<0>(iter1.iters) == std::get<0>(iter2.iters);
+}
+
+template <typename T, typename... Iters>
+inline bool operator!= (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return !operator==(iter1, iter2);
+}
+
+
+template <typename T, typename... Iters>
+inline bool operator< (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return std::get<0>(iter1.iters) < std::get<0>(iter2.iters);
+}
+
+template <typename T, typename... Iters>
+inline bool operator> (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return operator<(iter2, iter1);
+}
+
+template <typename T, typename... Iters>
+inline bool operator<= (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return !operator>(iter2, iter1);
+}
+
+template <typename T, typename... Iters>
+inline bool operator>= (const ZipIter<T, Iters...>& iter1, const ZipIter<T, Iters...>& iter2)
+{
+	return !operator<(iter2, iter1);
+}
+
+
+
+
 
 
 

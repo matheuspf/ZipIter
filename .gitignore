@@ -1,5 +1,7 @@
-#.o
-#.exe
-a.exe
-main.exe
-main.o
+*.o
+*.out
+*.so
+*.exe
+*.lib
+*.dll
+*.a

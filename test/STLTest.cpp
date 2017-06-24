@@ -118,6 +118,19 @@ namespace
 	}
 
 
+	TEST_F(STLTest, AdvanceTest)
+	{
+		auto iter = it::zipIter(v.begin(), u.begin());
+
+		std::advance(iter, 5);
+		std::advance(iter, -5);
+
+		iter = iter + 3;
+		iter = iter - 3;
+
+		EXPECT_EQ(*it::zipIter(v.begin(), u.begin()), *iter);
+	}
+
 
 } // namespace
 
